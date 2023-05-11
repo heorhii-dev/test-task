@@ -1,0 +1,16 @@
+{{ 'section-main-page.css' | asset_url | stylesheet_tag }}
+
+
+<script src="{{ 'section-new-featured-products.min.js' | asset_url }}" defer="defer"></script>
+
+{% schema %}
+  {
+    "name": "Featured Products",
+    "settings": [],
+    "presets": [
+      {
+        "name": "Featured Products"
+      }
+    ]
+  }
+{% endschema %}
