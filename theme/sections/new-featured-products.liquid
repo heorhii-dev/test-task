@@ -1,4 +1,36 @@
-{{ 'section-main-page.css' | asset_url | stylesheet_tag }}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;800&display=swap" rel="stylesheet">
+{{ 'section-new-featured-products.min.css' | asset_url | stylesheet_tag }}
+
+<section class="new-featured-products__section">
+  <div class="container">
+    {% if section.settings.title %}
+      <h2 class="title">{{ section.settings.collection.title }}</h2>
+    {% else %}
+      <h2 class="title">{{ section.settings.title }}</h2>
+    {% endif %}
+    <div class="product__blocks-wrapper">
+      {% for product in section.settings.collection.products %}
+        {% assign product_in_cart = false %}
+        {% for item in cart.items %}
+          {% if product.id == item.product_id %}
+            {% assign product_in_cart = true %}
+          {% endif %}
+        {% endfor %}
+        {% unless product_in_cart %}
+          <div
+            class="product__block">
+            <img
+              src="{{ product.featured_image |img_url: '443x' }}">
+            <div class="block__panel">
+              <h3 class="block__title">{{ product.title }}</h3>
+              <button class="btn">Add to cart - {{ product.price | money }}</button>
+            </div>
+          </div>
+        {% endunless %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
 
 
 <script src="{{ 'section-new-featured-products.min.js' | asset_url }}" defer="defer"></script>
@@ -6,7 +38,17 @@
 {% schema %}
   {
     "name": "Featured Products",
-    "settings": [],
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+      }, {
+        "type": "collection",
+        "id": "collection",
+        "label": "Collection"
+      }
+    ],
     "presets": [
       {
         "name": "Featured Products"

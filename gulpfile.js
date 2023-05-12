@@ -48,5 +48,6 @@ const build = {
         watch([`${buildConfig.workingScriptFilePath}`], this.scripts)
     }
 }
-
+exports.styles = build.styles;
+exports.scripts = build.scripts;  
 exports.watching = build.watching;

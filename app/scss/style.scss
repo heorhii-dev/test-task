@@ -1,0 +1,95 @@
+.new-featured-products__section {
+    padding: 40px 0 69px;  
+    font-family: 'Inter', sans-serif;
+    .container {
+        max-width: 986px;
+        margin: 0 auto;
+        & > .title {
+            font:800 26px/42px Inter;
+            color: #367488;
+            padding: 0 15px;
+            text-align: center;
+            margin: 0 0 30px 0;
+            @media (min-width: 976px){
+                font-size: 48px;
+                margin-bottom: 80px;
+            }
+        }
+        .product__blocks-wrapper {
+            display: flex;
+            width: 100%;
+            flex-flow: row wrap;
+            gap: 30px;
+            justify-content: center;
+
+            .product__block {
+                display: flex;
+                flex-flow: column;
+                align-items:center;
+                width: 100%;
+                img {
+                    max-height: 295px;
+                    max-width: 375px;
+                    width: 100%;
+                    object-fit: cover;
+                    @media (min-width: 976px){
+                        max-height: 357px;
+                        max-width: 443px;
+                    }
+                }
+                .block__panel {
+                    margin-top: 30px;
+                    display: flex;
+                    flex-flow: column;
+                    align-items:center;
+                    max-width: 343px;
+                    width: 100%;
+                    .block__title {
+                        font:500 20px/26px Inter;
+                        color: #000000;
+                        margin: 0  0 20px 0;
+                        @media (min-width: 976px){
+                            font-size: 24px;
+                            margin-bottom: 30px;
+                        }
+                    }
+                    @media(min-width:986px) {
+                        margin-top: 50px;
+                    }
+                }
+                @media(min-width:380px) {
+                    width: initial;
+                }
+            }
+            @media(min-width:986px) {
+                grid-column-gap: 100px;
+                grid-row-gap: 89px;
+            }
+        }
+        
+    }
+    .btn {
+        padding: 20px 35px;
+        background-color: #4A97AF;
+        border-radius: 40px;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        display: flex;
+        width: 100%;
+        font:400 14px/26px Inter;
+        color:#fff;
+        justify-content: center;
+        transition: background-color .5s ease-in-out;
+        &:hover {
+            background-color:#52a7c1;
+        }
+        @media (min-width: 976px){
+            font-size: 16px;
+        }
+    }
+    @media (min-width: 976px){
+        padding: 139px 0;
+    }
+
+}
