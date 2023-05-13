@@ -1,7 +1,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;800&display=swap" rel="stylesheet">
 {{ 'section-new-featured-products.min.css' | asset_url | stylesheet_tag }}
 
-<section class="new-featured-products__section">
+<div class="new-featured-products__wrapper">
   <div class="container">
     {% if section.settings.title %}
       <h2 class="title">{{ section.settings.collection.title }}</h2>
@@ -17,27 +17,91 @@
           {% endif %}
         {% endfor %}
         {% unless product_in_cart %}
-          <div
-            class="product__block">
-            <img
-              src="{{ product.featured_image |img_url: '443x' }}">
+          <div class="product__block">
+            <img src="{{ product.featured_image |img_url: '443x' }}">
             <div class="block__panel">
               <h3 class="block__title">{{ product.title }}</h3>
-              <button class="btn">Add to cart - {{ product.price | money }}</button>
+              <button data-product-id={{product.selected_or_first_available_variant.id}} class="btn">Add to cart - {{ product.price | money }}</button>
             </div>
           </div>
         {% endunless %}
       {% endfor %}
     </div>
   </div>
-</section>
+</div>
 
+{% comment %} <script src="{{ 'section-new-featured-products.min.js' | asset_url }}" defer="defer"></script> {% endcomment %}
 
-<script src="{{ 'section-new-featured-products.min.js' | asset_url }}" defer="defer"></script>
+<script>
+  const newFeaturedProductsSection = {
+    section: document.querySelector('#shopify-section-{{ section.id }}'),
+    cart: document.querySelector('cart-notification'),
+    init: function() {
+      if (this.section.querySelector(`.product__blocks-wrapper`).children.length > 0) {
+        this.section.querySelectorAll(`.btn`).forEach(item => {
+          item.addEventListener("click", () => {
+              const variantId = parseInt(item.getAttribute("data-product-id"));
+              this.addToCart(variantId, 1);
+            })
+        })
+      } 
+      else {
+        this.section.querySelector(`.title`).innerText = `All Featured Products in Cart`
+      }
+    
+    },
+    addToCart: async function(id,qty) {
+      const response = await fetch('/cart/add.js', { 
+        method: "POST", 
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          items: [
+            {
+              id: id,
+              quantity: qty
+            }
+          ]
+        })
+      })
+      const jsonData = await response.json();
+      this.reRenderSection()
+      this.showNotificationAndUpdateCartIcon()
+    },
+    reRenderSection: async function() {
+      const response = await fetch(`/?sections={{ section.id }}`)
+      const jsonData = await response.json();
+      const blocks = this.parseDOMFromString(jsonData[`{{ section.id }}`]).querySelector(".product__blocks-wrapper");
+      this.section.querySelector(`.product__blocks-wrapper`).innerHTML = blocks.innerHTML;
+      this.init() 
+    },
+    parseDOMFromString: function(string) {
+      const parser = new DOMParser();
+      const parsedHtml = parser.parseFromString(string, 'text/html');
+      return parsedHtml.documentElement;
+    },
+    showNotificationAndUpdateCartIcon: async function() {
+      const updatedSetions = await fetch(`/?sections=cart-notification-product,cart-notification-button,cart-icon-bubble`)
+      const response = await updatedSetions.json();
+      this.cart.getSectionsToRender().forEach((section => {
+        document.querySelector(`#${section.id}`).innerHTML = this.parseDOMFromString(response[section.id]).innerHTML;
+      }))
+      this.cart.open()
+      setTimeout(() => {
+        this.cart.close()
+      },4000)
+    }
+  }
+  document.addEventListener("DOMContentLoaded", () => {
+    newFeaturedProductsSection.init();
+  })
+</script>
 
 {% schema %}
   {
     "name": "Featured Products",
+    "tag": "section",
     "settings": [
       {
         "type": "text",
