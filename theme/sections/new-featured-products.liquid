@@ -1,5 +1,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;800&display=swap" rel="stylesheet">
 {{ 'section-new-featured-products.min.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'section-new-featured-products.min.js' | asset_url }}" defer ></script>
 
 <div class="new-featured-products__wrapper">
   <div class="container">
@@ -17,20 +18,17 @@
           {% endif %}
         {% endfor %}
         {% unless product_in_cart %}
-          <div class="product__block">
-            <img src="{{ product.featured_image |img_url: '443x' }}">
-            <div class="block__panel">
-              <h3 class="block__title">{{ product.title }}</h3>
-              <button data-product-id={{product.selected_or_first_available_variant.id}} class="btn">Add to cart - {{ product.price | money }}</button>
-            </div>
-          </div>
+          <product-block
+            data-product-id="{{product.selected_or_first_available_variant.id}}"
+            image-src="{{ product.featured_image |img_url: '443x' }}"
+            title="{{ product.title }}"
+            price="{{ product.price | money }}"
+          ></product-block>
         {% endunless %}
       {% endfor %}
     </div>
   </div>
 </div>
-
-{% comment %} <script src="{{ 'section-new-featured-products.min.js' | asset_url }}" defer="defer"></script> {% endcomment %}
 
 <script>
   const newFeaturedProductsSection = {
